@@ -4,7 +4,7 @@ const cTable = require('console.table');
 const SqlFunctions = require('./lib/sqlPromises');
 
 let goodbye = `
-   ▄██████▄   ▄██████▄   ▄██████▄  ████████▄ ▀█████████▄ ▄█    ▄      ▄████████ 
+ ▄██████▄   ▄██████▄   ▄██████▄  ████████▄   ▀█████████▄ ▄█    ▄      ▄████████ 
 ███    ███ ███    ███ ███    ███ ███   ▀███   ███    ███ ███   ██▄   ███    ███ 
 ███    █▀  ███    ███ ███    ███ ███    ███   ███    ███ ███▄▄▄███   ███    █▀  
 ███        ███    ███ ███    ███ ███    ███  ▄███▄▄▄██▀  ▀▀▀▀▀▀███  ▄███▄▄▄     
@@ -43,6 +43,7 @@ userPrompt = () => {
                     {name: 'Add a department'},
                     {name: 'Add a role'},
                     {name: 'Add an employee'},
+                    {name: 'Update an employee\'s role'},
                     {name: 'Exit'}
                     
                 ]
@@ -76,6 +77,9 @@ const sql = new SqlFunctions
             init();
         } else if (response === "Add an employee") {
             await sql.addEmployee();
+            init();
+        } else if (response === "Update an employee's role") {
+            await sql.updateEmployeeRole();
             init();
         }
         else if (response === "Exit") {
