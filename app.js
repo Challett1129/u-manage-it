@@ -1,28 +1,113 @@
 const inquirer = require('inquirer');
-const db = require('./db/connections');
+const connection = require('./db/connections');
 const cTable = require('console.table');
-const { getEmployees } = require('./utils/sqlPromises');
+const SqlFunctions = require('./lib/sqlPromises');
 
+let goodbye = `
+   ▄██████▄   ▄██████▄   ▄██████▄  ████████▄ ▀█████████▄ ▄█    ▄      ▄████████ 
+███    ███ ███    ███ ███    ███ ███   ▀███   ███    ███ ███   ██▄   ███    ███ 
+███    █▀  ███    ███ ███    ███ ███    ███   ███    ███ ███▄▄▄███   ███    █▀  
+███        ███    ███ ███    ███ ███    ███  ▄███▄▄▄██▀  ▀▀▀▀▀▀███  ▄███▄▄▄     
+███ ████▄  ███    ███ ███    ███ ███    ███ ▀▀███▀▀▀██▄  ▄██   ███ ▀▀███▀▀▀     
+███    ███ ███    ███ ███    ███ ███    ███   ███    ██▄ ███   ███   ███    █▄  
+███    ███ ███    ███ ███    ███ ███   ▄███   ███    ███ ███   ███   ███    ███ 
+████████▀   ▀██████▀   ▀██████▀  ████████▀  ▄█████████▀   ▀█████▀    ██████████ 
 
-init = () => {
+                                                                                `
+
+console.log(`
+▄█     █▄     ▄████████  ▄█        ▄████████  ▄██████▄    ▄▄▄▄███▄▄▄▄      ▄████████ 
+███     ███   ███    ███ ███       ███    ███ ███    ███ ▄██▀▀▀███▀▀▀██▄   ███    ███ 
+███     ███   ███    █▀  ███       ███    █▀  ███    ███ ███   ███   ███   ███    █▀  
+███     ███  ▄███▄▄▄     ███       ███        ███    ███ ███   ███   ███  ▄███▄▄▄     
+███     ███ ▀▀███▀▀▀     ███       ███        ███    ███ ███   ███   ███ ▀▀███▀▀▀     
+███     ███   ███    █▄  ███       ███    █▄  ███    ███ ███   ███   ███   ███    █▄  
+███ ▄█▄ ███   ███    ███ ███▌    ▄ ███    ███ ███    ███ ███   ███   ███   ███    ███ 
+▀███▀███▀    ██████████ █████▄▄██ ████████▀   ▀██████▀   ▀█   ███   █▀    ██████████ 
+▀                                                            
+                                                              
+`)
+
+userPrompt = () => {
     return inquirer
         .prompt([
             {
                 type: 'list', 
-                name: 'menu', 
+                name: 'choice', 
                 message: 'What would you like to do?',
-                choices: ['View my employees', 'Chicken']
-            }
+                // choices: ['View all employees', 'View all departments', 'Exit']
+                choices: [
+                    {name: 'View all employees'},
+                    {name: 'View all departments'},
+                    {name: 'View all roles'},
+                    {name: 'Add a department'},
+                    {name: 'Add a role'},
+                    {name: 'Exit'}
+                    
+                ]
+            },
+                
         ])
-}
+        .then(({choice}) => {
+            console.log(choice)
+            return choice;
+        });
+};
 
-
-async function choices() {
-    init().then(choice => {
-    if(choice === 'View my employees')
-    getEmployees();
+function init(){
+const sql = new SqlFunctions
+    userPrompt().then(async response => {
+        if(response === "View all employees") {
+           await sql.getEmployees();
+            init();
+        } 
+        else if (response === "View all departments") {
+            await sql.getDepartments();
+            init();
+        } else if (response === "View all roles") {
+            await sql.getRoles();
+            init();
+        } else if (response === "Add a department") {
+            await sql.addDepartment();
+            init();
+        } else if (response === "Add a role") {
+            await sql.addRole();
+            init();
+        }
+        else if (response === "Exit") {
+            console.log(goodbye);
+            connection.end();
+        } else {
+            console.log('There was an error with the application')
+            connection.end();
+        }
+    })
+    .catch(err => {
+        console.log(err);
     })
     
-}
+};
 
-choices();
+
+let departmentArr = []
+let departmentObj = {}
+
+connection.query(`SELECT departments.id AS id, departments.department_name AS name FROM departments`, (err, rows) => {
+    if (err) {
+    console.log(err);   
+    }
+// console.log(rows[0].name)
+console.log(rows);
+    for(i = 0; i < rows.length; i++) {
+        departmentObj.name = rows[i].name
+        departmentObj.value = rows[i].id
+        departmentArr.push(departmentObj);
+    }
+        console.log(departmentArr)
+        connection.end();
+})
+
+console.log(departmentArr)
+
+// getDepartmentsArr();
+// init();
