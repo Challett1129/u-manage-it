@@ -42,6 +42,7 @@ userPrompt = () => {
                     {name: 'View all roles'},
                     {name: 'Add a department'},
                     {name: 'Add a role'},
+                    {name: 'Add an employee'},
                     {name: 'Exit'}
                     
                 ]
@@ -73,6 +74,9 @@ const sql = new SqlFunctions
         } else if (response === "Add a role") {
             await sql.addRole();
             init();
+        } else if (response === "Add an employee") {
+            await sql.addEmployee();
+            init();
         }
         else if (response === "Exit") {
             console.log(goodbye);
@@ -89,25 +93,7 @@ const sql = new SqlFunctions
 };
 
 
-let departmentArr = []
-let departmentObj = {}
 
-connection.query(`SELECT departments.id AS id, departments.department_name AS name FROM departments`, (err, rows) => {
-    if (err) {
-    console.log(err);   
-    }
-// console.log(rows[0].name)
-console.log(rows);
-    for(i = 0; i < rows.length; i++) {
-        departmentObj.name = rows[i].name
-        departmentObj.value = rows[i].id
-        departmentArr.push(departmentObj);
-    }
-        console.log(departmentArr)
-        connection.end();
-})
-
-console.log(departmentArr)
 
 // getDepartmentsArr();
-// init();
+init();

@@ -13,7 +13,7 @@ VALUES
 ('Software Engineer', 125000, 2),
 ('Accountant Team Lead', 90000, 3),
 ('Accountant', 60000, 3),
-('Legal Team Lead', 250000, 4),
+('Legal Team Lead', 250001, 4),
 ('Lawyer', 190000, 4);
 
 INSERT INTO employees (first_name, last_name, role_id, manager_id) 
@@ -26,4 +26,4 @@ VALUES
 ('Alexis', 'Mendoza', 8, 2),
 ('Logan', 'Regan', 2, 4),
 ('Trinity', 'Carnes', 5, NULL),
-('Crispin', 'Valadez', 6, 9);
+('Crispin', 'Valadez', 6, 8);
